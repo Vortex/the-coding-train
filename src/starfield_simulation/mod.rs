@@ -29,7 +29,7 @@ impl Star {
     }
 }
 
-#[derive(Resource)]
+#[derive(Resource, Default)]
 pub struct Model {
     stars: Vec<Star>,
 }
@@ -37,7 +37,9 @@ pub struct Model {
 
 impl Plugin for StarfieldSimulationPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, setup);
+        app
+            .insert_resource(Model::default())
+            .add_systems(Startup, setup);
     }
 }
 

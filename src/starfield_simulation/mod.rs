@@ -7,13 +7,12 @@ const POPULATION: u32 = 100;
 
 pub struct StarfieldSimulationPlugin;
 
+#[derive(Component)]
 pub struct Star {
     x: f32,
     y: f32,
     z: f32,
 }
-
-
 
 impl Star {
     fn new() -> Self {
@@ -34,13 +33,11 @@ pub struct Model {
     stars: Vec<Star>,
 }
 
-
 impl Plugin for StarfieldSimulationPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .insert_resource(Model::default())
+        app.insert_resource(Model::default())
             .add_systems(Startup, setup)
-            .add_systems(Update, draw_stars);
+            .add_systems(Update, (update_positions, draw_stars));
     }
 }
 
@@ -57,8 +54,19 @@ fn setup(mut commands: Commands, mut model: ResMut<Model>) {
     model.stars = stars;
 }
 
-fn draw_stars(mut commands: Commands, model: Res<Model>,     mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<ColorMaterial>>) {
+fn update_positions(mut model: ResMut<Model>) {
+    for i in 0..POPULATION as usize {
+        let star = &mut model.stars[i];
+        star.y = star.y + 1.0;
+    }
+}
+
+fn draw_stars(
+    mut commands: Commands,
+    model: Res<Model>,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<ColorMaterial>>,
+) {
     for star in &model.stars {
         commands.spawn(MaterialMesh2dBundle {
             mesh: meshes.add(shape::Circle::new(8.).into()).into(),

@@ -30,13 +30,13 @@ impl Star {
 
 impl Plugin for StarfieldSimulationPlugin {
     fn build(&self, app: &mut App) {
-        app.insert_resource(Model::default())
-            .add_systems(Startup, setup)
-            .add_systems(Update, (update_positions, draw_stars));
+        app
+            .add_systems(Startup, setup);
+            // .add_systems(Update, (update_positions, draw_stars));
     }
 }
 
-fn setup(mut commands: Commands, mut model: ResMut<Model>) {
+fn setup(mut commands: Commands, query: Query<&Star>) {
     // Spawn the camera
     commands.spawn(Camera2dBundle::default());
 
@@ -46,15 +46,14 @@ fn setup(mut commands: Commands, mut model: ResMut<Model>) {
         stars.push(Star::new());
     }
 
-    model.stars = stars;
 }
 
-fn update_positions(mut model: ResMut<Model>) {
-    for i in 0..POPULATION as usize {
-        let star = &mut model.stars[i];
-        star.y = star.y + 1.0;
-    }
-}
+// fn update_positions(mut model: ResMut<Model>) {
+//     for i in 0..POPULATION as usize {
+//         let star = &mut model.stars[i];
+//         star.y = star.y + 1.0;
+//     }
+// }
 
 fn draw_stars(
     mut commands: Commands,

@@ -7,7 +7,7 @@ const POPULATION: u32 = 100;
 
 pub struct StarfieldSimulationPlugin;
 
-#[derive(Component)]
+#[derive(Component, Debug)]
 pub struct Star {
     x: f32,
     y: f32,
@@ -31,21 +31,31 @@ impl Star {
 impl Plugin for StarfieldSimulationPlugin {
     fn build(&self, app: &mut App) {
         app
-            .add_systems(Startup, setup);
+            .add_systems(Startup, setup)
+            .add_systems(Startup, spawn_stars.after(setup));
             // .add_systems(Update, (update_positions, draw_stars));
     }
 }
 
-fn setup(mut commands: Commands, query: Query<&Star>) {
+fn setup(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut materials: ResMut<Assets<ColorMaterial>>) {
     // Spawn the camera
     commands.spawn(Camera2dBundle::default());
 
     println!("Starfield simulation setup");
-    let mut stars = Vec::new();
-    for _ in 0..POPULATION {
-        stars.push(Star::new());
-    }
+    
+    // for _ in 0..POPULATION {
+    //     stars.push(Star::new());
+    // }
 
+
+
+    // Circle
+    commands.spawn(MaterialMesh2dBundle {
+        mesh: meshes.add(shape::Circle::new(50.).into()).into(),
+        material: materials.add(ColorMaterial::from(Color::PURPLE)),
+        transform: Transform::from_translation(Vec3::new(-150., 0., 0.)),
+        ..default()
+    });    
 }
 
 // fn update_positions(mut model: ResMut<Model>) {
@@ -55,17 +65,23 @@ fn setup(mut commands: Commands, query: Query<&Star>) {
 //     }
 // }
 
-fn draw_stars(
+fn spawn_stars(
     mut commands: Commands,
-    model: Res<Model>,
+    // query: Query<&Star>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
-    for star in &model.stars {
+    let mut stars = Vec::new();
+    for _ in 0..POPULATION {
+        stars.push(Star::new());
+    }
+
+    for star in stars {
+        println!("Star: {:?}", star);
         commands.spawn(MaterialMesh2dBundle {
             mesh: meshes.add(shape::Circle::new(8.).into()).into(),
             material: materials.add(ColorMaterial::from(Color::WHITE)),
-            transform: Transform::from_translation(Vec3::new(star.x, star.y, 0.)),
+            transform: Transform::from_translation(Vec3::new(star.x, star.y, 0.1)),
             ..default()
         });
     }

@@ -32,8 +32,8 @@ impl Plugin for StarfieldSimulationPlugin {
     fn build(&self, app: &mut App) {
         app
             .add_systems(Startup, setup)
-            .add_systems(Startup, spawn_stars.after(setup));
-            // .add_systems(Update, (update_positions, draw_stars));
+            .add_systems(Startup, spawn_stars.after(setup))       
+            .add_systems(Update, move_stars);
     }
 }
 
@@ -83,6 +83,19 @@ fn spawn_stars(
             material: materials.add(ColorMaterial::from(Color::WHITE)),
             transform: Transform::from_translation(Vec3::new(star.x, star.y, 0.1)),
             ..default()
-        });
+        }).insert(star);
+    }
+}
+
+fn move_stars(mut query: Query<(&mut Star, &mut Transform)>, time: Res<Time>) {
+    for (mut star, mut transform) in query.iter_mut() {
+        let delta = time.delta_seconds() * 50.0; // Movement speed
+
+        // Update Star component
+        star.x += delta;
+        star.y += delta;
+
+        // Apply the updated position to the Transform component
+        *transform = Transform::from_xyz(star.x, star.y, 0.1);
     }
 }

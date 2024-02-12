@@ -1,5 +1,5 @@
 use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
-use nannou::{draw, rand::random_range};
+use nannou::rand::random_range;
 
 const WIDTH: u32 = 400;
 const HEIGHT: u32 = 400;
@@ -30,24 +30,19 @@ impl Star {
 
 impl Plugin for StarfieldSimulationPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .add_systems(Startup, setup)
-            .add_systems(Startup, spawn_stars.after(setup))       
+        app.add_systems(Startup, setup)
+            .add_systems(Startup, spawn_stars.after(setup))
             .add_systems(Update, move_stars);
     }
 }
 
-fn setup(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut materials: ResMut<Assets<ColorMaterial>>) {
+fn setup(
+    mut commands: Commands,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<ColorMaterial>>,
+) {
     // Spawn the camera
     commands.spawn(Camera2dBundle::default());
-
-    println!("Starfield simulation setup");
-    
-    // for _ in 0..POPULATION {
-    //     stars.push(Star::new());
-    // }
-
-
 
     // Circle
     commands.spawn(MaterialMesh2dBundle {
@@ -55,15 +50,8 @@ fn setup(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut materials
         material: materials.add(ColorMaterial::from(Color::PURPLE)),
         transform: Transform::from_translation(Vec3::new(-150., 0., 0.)),
         ..default()
-    });    
+    });
 }
-
-// fn update_positions(mut model: ResMut<Model>) {
-//     for i in 0..POPULATION as usize {
-//         let star = &mut model.stars[i];
-//         star.y = star.y + 1.0;
-//     }
-// }
 
 fn spawn_stars(
     mut commands: Commands,
@@ -78,12 +66,14 @@ fn spawn_stars(
 
     for star in stars {
         println!("Star: {:?}", star);
-        commands.spawn(MaterialMesh2dBundle {
-            mesh: meshes.add(shape::Circle::new(8.).into()).into(),
-            material: materials.add(ColorMaterial::from(Color::WHITE)),
-            transform: Transform::from_translation(Vec3::new(star.x, star.y, 0.1)),
-            ..default()
-        }).insert(star);
+        commands
+            .spawn(MaterialMesh2dBundle {
+                mesh: meshes.add(shape::Circle::new(8.).into()).into(),
+                material: materials.add(ColorMaterial::from(Color::WHITE)),
+                transform: Transform::from_translation(Vec3::new(star.x, star.y, 0.1)),
+                ..default()
+            })
+            .insert(star);
     }
 }
 

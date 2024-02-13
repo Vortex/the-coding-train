@@ -9,6 +9,7 @@ mod starfield_simulation;
 
 fn main() {
     App::new()
+        .insert_resource(ClearColor(Color::BLACK))
         .add_plugins(DefaultPlugins)
         .add_plugins(WorldInspectorPlugin::new())
         .add_plugins(StarfieldSimulationPlugin)

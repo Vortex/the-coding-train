@@ -1,5 +1,5 @@
 use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
-use nannou::rand::random_range;
+use nannou::{math::map_range, rand::random_range};
 
 const WIDTH: u32 = 400;
 const HEIGHT: u32 = 400;
@@ -59,12 +59,13 @@ fn spawn_stars(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
-    let mut stars = Vec::new();
-    for _ in 0..POPULATION {
-        stars.push(Star::new());
-    }
+    // let mut stars = Vec::new();
+    // for _ in 0..POPULATION {
+    //     // stars.push(Star::new());
+    // }
 
-    for star in stars {
+    for _ in 0..POPULATION {
+        let star = Star::new();
         println!("Star: {:?}", star);
         commands
             .spawn(MaterialMesh2dBundle {
@@ -80,6 +81,9 @@ fn spawn_stars(
 fn move_stars(mut query: Query<(&mut Star, &mut Transform)>, time: Res<Time>) {
     for (mut star, mut transform) in query.iter_mut() {
         let delta = time.delta_seconds() * 50.0; // Movement speed
+
+        // let sx: f32 = map_range(star.x / star.z, 0.0, 1.0, 0.0, WIDTH as f32);
+        // let sy = map_range(star.y / star.z, 0.0, 1.0, 0.0, HEIGHT as f32);
 
         // Update Star component
         star.x += delta;

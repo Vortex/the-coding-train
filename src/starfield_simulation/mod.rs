@@ -54,16 +54,10 @@ fn setup(
 }
 
 fn spawn_stars(
-    mut commands: Commands,
-    // query: Query<&Star>,
+    mut commands: Commands,   
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
-    // let mut stars = Vec::new();
-    // for _ in 0..POPULATION {
-    //     // stars.push(Star::new());
-    // }
-
     for _ in 0..POPULATION {
         let star = Star::new();
         println!("Star: {:?}", star);

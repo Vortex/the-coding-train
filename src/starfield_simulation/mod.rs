@@ -59,8 +59,14 @@ fn spawn_stars(
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     for _ in 0..POPULATION {
-        let star = Star::new();
+        let star = Star::new();        
         println!("Star: {:?}", star);
+
+
+        // Use this so calculate the precise position of the star
+        // let sx: f32 = map_range(star.x / star.z, 0.0, 1.0, 0.0, WIDTH as f32);
+        // let sy = map_range(star.y / star.z, 0.0, 1.0, 0.0, HEIGHT as f32);        
+
         commands
             .spawn(MaterialMesh2dBundle {
                 mesh: meshes.add(shape::Circle::new(8.).into()).into(),
@@ -76,8 +82,6 @@ fn move_stars(mut query: Query<(&mut Star, &mut Transform)>, time: Res<Time>) {
     for (mut star, mut transform) in query.iter_mut() {
         let delta = time.delta_seconds() * 50.0; // Movement speed
 
-        // let sx: f32 = map_range(star.x / star.z, 0.0, 1.0, 0.0, WIDTH as f32);
-        // let sy = map_range(star.y / star.z, 0.0, 1.0, 0.0, HEIGHT as f32);
 
         // Update Star component
         star.x += delta;

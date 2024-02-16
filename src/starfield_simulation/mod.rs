@@ -62,16 +62,15 @@ fn spawn_stars(
         let star = Star::new();        
         println!("Star: {:?}", star);
 
-
         // Use this so calculate the precise position of the star
-        // let sx: f32 = map_range(star.x / star.z, 0.0, 1.0, 0.0, WIDTH as f32);
-        // let sy = map_range(star.y / star.z, 0.0, 1.0, 0.0, HEIGHT as f32);        
+        let sx: f32 = map_range(star.x / star.z, 0.0, 1.0, 0.0, WIDTH as f32);
+        let sy = map_range(star.y / star.z, 0.0, 1.0, 0.0, HEIGHT as f32);        
 
         commands
             .spawn(MaterialMesh2dBundle {
                 mesh: meshes.add(shape::Circle::new(8.).into()).into(),
                 material: materials.add(ColorMaterial::from(Color::WHITE)),
-                transform: Transform::from_translation(Vec3::new(star.x, star.y, 0.1)),
+                transform: Transform::from_translation(Vec3::new(sx, sy, 0.1)),
                 ..default()
             })
             .insert(star);
@@ -82,12 +81,22 @@ fn move_stars(mut query: Query<(&mut Star, &mut Transform)>, time: Res<Time>) {
     for (mut star, mut transform) in query.iter_mut() {
         let delta = time.delta_seconds() * 50.0; // Movement speed
 
-
         // Update Star component
-        star.x += delta;
-        star.y += delta;
+        // star.x += delta;
+        // star.y += delta;
+        star.z -= delta;
+
+        if star.z < 1.0 {
+            star.z = WIDTH as f32;
+            star.x = random_range(-(WIDTH as f32), WIDTH as f32);
+            star.y = random_range(-(HEIGHT as f32), HEIGHT as f32);
+        }
+
+        let sx: f32 = map_range(star.x / star.z, 0.0, 1.0, 0.0, WIDTH as f32);
+        let sy = map_range(star.y / star.z, 0.0, 1.0, 0.0, HEIGHT as f32);        
+
 
         // Apply the updated position to the Transform component
-        *transform = Transform::from_xyz(star.x, star.y, 0.1);
+        *transform = Transform::from_xyz(sx, sy, 0.1);
     }
 }

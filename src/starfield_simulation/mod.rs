@@ -82,8 +82,6 @@ fn move_stars(mut query: Query<(&mut Star, &mut Transform)>, time: Res<Time>) {
         let delta = time.delta_seconds() * 50.0; // Movement speed
 
         // Update Star component
-        // star.x += delta;
-        // star.y += delta;
         star.z -= delta;
 
         if star.z < 1.0 {
